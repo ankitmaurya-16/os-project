@@ -1,0 +1,145 @@
+qemu-system-i386 -nographic -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp 2 -m 512 
+SeaBIOS (version rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org)
+
+
+iPXE (http://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+1EFD1EC0+1EF31EC0 CA00
+Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
+
+
+Booting from Hard Disk..xv6...
+cpu0: starting 0
+sb: size 2000 nblocks 1941 ninodes 200 nlog 30 logstart 2 inodestart 32 bmap start 58
+init: starting sh
+$ marktaint inbox.txt
+marktaint: inbox.txt is now untrusted
+$ cat inbox.txt | rm scratch.txt
+taint: pid 5 tainted by reading inode 6
+$ ls scratch.txt
+ls: cannot open scratch.txt
+$ rm scratch.txt
+rm: scratch.txt failed to delete
+$ ls scratch.txt
+ls: cannot open scratch.txt
+$ usertests
+usertests starting
+arg test passed
+createdelete test
+createdelete ok
+linkunlink test
+linkunlink ok
+concreate test
+concreate ok
+fourfiles test
+fourfiles ok
+sharedfd test
+sharedfd ok
+bigarg test
+bigarg test ok
+bigwrite test
+bigwrite ok
+bigarg test
+bigarg test ok
+bss test
+bss test ok
+sbrk test
+pid 104 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80000000--kill proc
+pid 105 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x8000c350--kill proc
+pid 106 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800186a0--kill proc
+pid 107 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800249f0--kill proc
+pid 108 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80030d40--kill proc
+pid 109 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x8003d090--kill proc
+pid 110 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800493e0--kill proc
+pid 111 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80055730--kill proc
+pid 112 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80061a80--kill proc
+pid 113 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x8006ddd0--kill proc
+pid 114 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x8007a120--kill proc
+pid 115 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80086470--kill proc
+pid 116 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800927c0--kill proc
+pid 117 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x8009eb10--kill proc
+pid 118 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800aae60--kill proc
+pid 119 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800b71b0--kill proc
+pid 120 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800c3500--kill proc
+pid 121 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800cf850--kill proc
+pid 122 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800dbba0--kill proc
+pid 123 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800e7ef0--kill proc
+pid 124 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x800f4240--kill proc
+pid 125 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80100590--kill proc
+pid 126 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x8010c8e0--kill proc
+pid 127 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80118c30--kill proc
+pid 128 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80124f80--kill proc
+pid 129 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x801312d0--kill proc
+pid 130 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x8013d620--kill proc
+pid 131 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80149970--kill proc
+pid 132 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80155cc0--kill proc
+pid 133 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80162010--kill proc
+pid 134 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x8016e360--kill proc
+pid 135 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x8017a6b0--kill proc
+pid 136 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80186a00--kill proc
+pid 137 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x80192d50--kill proc
+pid 138 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x8019f0a0--kill proc
+pid 139 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x801ab3f0--kill proc
+pid 140 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x801b7740--kill proc
+pid 141 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x801c3a90--kill proc
+pid 142 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x801cfde0--kill proc
+pid 143 usertests: trap 14 err 5 on cpu 0 eip 0x3087 addr 0x801dc130--kill proc
+allocuvm out of memory
+allocuvm out of memory
+allocuvm out of memory
+allocuvm out of memory
+allocuvm out of memory
+allocuvm out of memory
+allocuvm out of memory
+allocuvm out of memory
+sbrk test OK
+validate test
+validate ok
+open test
+open test ok
+small file test
+creat small succeeded; ok
+writes ok
+open small succeeded ok
+read succeeded ok
+small file test ok
+big files test
+big files ok
+many creates, followed by unlink test
+many creates, followed by unlink; ok
+openiput test
+openiput test ok
+exitiput test
+exitiput test ok
+iput test
+iput test ok
+mem test
+allocuvm out of memory
+mem ok
+pipe1 ok
+preempt: kill... wait... preempt ok
+exitwait ok
+rmdot test
+rmdot ok
+fourteen test
+fourteen ok
+bigfile test
+bigfile test ok
+subdir test
+subdir ok
+linktest
+linktest ok
+unlinkread test
+unlinkread ok
+dir vs file
+dir vs file OK
+empty file name
+empty file name OK
+fork test
+fork test OK
+bigdir test
+bigdir ok
+uio test
+pid 598 usertests: trap 13 err 0 on cpu 0 eip 0x3603 addr 0x801dc130--kill proc
+uio test done
+exec test
+ALL TESTS PASSED
+$ QEMU: Terminated
