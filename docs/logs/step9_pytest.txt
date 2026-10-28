@@ -1,0 +1,33 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.7, pytest-7.4.4, pluggy-1.6.0 -- /opt/anaconda3/bin/python3
+rootdir: /Users/ankit/Documents/os-project/xv6-public/python
+plugins: cov-7.1.0, anyio-4.2.0
+collecting ... collected 25 items
+
+test_agent.py::test_unknown_tool_rejected PASSED                         [  4%]
+test_agent.py::test_unknown_tool_never_reaches_guest PASSED              [  8%]
+test_agent.py::test_bad_path_rejected[../README] PASSED                  [ 12%]
+test_agent.py::test_bad_path_rejected[/a/b] PASSED                       [ 16%]
+test_agent.py::test_bad_path_rejected[/..] PASSED                        [ 20%]
+test_agent.py::test_bad_path_rejected[/.] PASSED                         [ 24%]
+test_agent.py::test_bad_path_rejected[] PASSED                           [ 28%]
+test_agent.py::test_bad_path_rejected[/] PASSED                          [ 32%]
+test_agent.py::test_bad_path_rejected[/x;rm important.txt] PASSED        [ 36%]
+test_agent.py::test_bad_path_rejected[/averyverylongname.txt] PASSED     [ 40%]
+test_agent.py::test_malformed_call_rejected[action0] PASSED              [ 44%]
+test_agent.py::test_malformed_call_rejected[action1] PASSED              [ 48%]
+test_agent.py::test_malformed_call_rejected[action2] PASSED              [ 52%]
+test_agent.py::test_malformed_call_rejected[action3] PASSED              [ 56%]
+test_agent.py::test_malformed_call_rejected[read_file /inbox.txt] PASSED [ 60%]
+test_agent.py::test_path_is_normalized PASSED                            [ 64%]
+test_agent.py::test_delete_needs_allow_destructive PASSED                [ 68%]
+test_agent.py::test_timeout_returns_error PASSED                         [ 72%]
+test_agent.py::test_forged_end_marker_is_not_accepted PASSED             [ 76%]
+test_agent.py::test_bridge_refuses_unsafe_path PASSED                    [ 80%]
+test_agent.py::test_control_delete_succeeds_when_inbox_trusted PASSED    [ 84%]
+test_agent.py::test_list_succeeds PASSED                                 [ 88%]
+test_agent.py::test_read_trusted_succeeds PASSED                         [ 92%]
+test_agent.py::test_read_untrusted_taints_session PASSED                 [ 96%]
+test_agent.py::test_injected_delete_refused_by_kernel PASSED             [100%]
+
+============================== 25 passed in 7.25s ==============================
