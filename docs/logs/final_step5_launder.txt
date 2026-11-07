@@ -1,0 +1,101 @@
+# Final step 5: laundering attack suite (launder.c)
+#
+# Each attack runs in its own child of a clean parent. Attacks 2, 4, 7, 9
+# then hand the laundered file to a fresh "consumer" forked by the clean
+# parent, so the consumer can only be tainted by what it reads.
+#
+# Result on the final kernel: 10/10 BLOCKED.
+#
+# Control: the same launder.c built on the mid-term kernel (tag midterm):
+# 6/10 blocked. Attacks 2, 4, 7, 8 LEAK there -- exactly what final steps 1-2
+# (file write/create propagation, write-down) fixed. Attack 10 shows BLOCKED on
+# the mid-term kernel only because /safe does not exist there: the untrusted
+# ld.evil actually ran (as rm) and only the unlink rule stopped it. The
+# "mechanism" text in each line describes the final kernel.
+
+===== final kernel =====
+$ launder
+taint: pid 4 tainted by reading inode 32
+taint: unlink refused for pid 4
+A1 BLOCKED read through a dup'd fd: fileread taints via the inode, not the fd
+taint: pid 5 tainted by reading inode 32
+taint: unlink refused for pid 5
+taint: pid 6 tainted by reading inode 34
+taint: unlink refused for pid 6
+A2 BLOCKED write, delete, recreate: unlink refused; create starts untrusted
+taint: pid 9 tainted by reading inode 32
+taint: pid 7 tainted by reading a pipe
+taint: unlink refused for pid 7
+A3 BLOCKED clean + tainted writer on one pipe: piperead byte ranges
+taint: pid 11 tainted by reading inode 32
+taint: pid 10 tainted by reading a pipe
+taint: pid 10 marked inode 34 untrusted by writing
+taint: pid 12 tainted by reading inode 34
+taint: unlink refused for pid 12
+A4 BLOCKED pipe -> clean helper -> file -> reader: piperead, then filewrite marks the file
+taint: pid 13 tainted by reading inode 32
+taint: exec /rm refused for pid 13
+taint: unlink refused for pid 13
+launder: exec'd child unlink(ld.victim) = -1, tainted=1
+A5 BLOCKED exec a fresh program: exec keeps taint; /safe exec rule
+taint: pid 14 tainted by reading inode 32
+taint: unlink refused for pid 15
+A6 BLOCKED fork a child to delete: fork copies taint
+taint: pid 16 tainted by reading inode 32
+taint: pid 17 tainted by reading inode 34
+taint: unlink refused for pid 17
+A7 BLOCKED copy to a new file (mid-term hole): create/filewrite mark the copy
+taint: pid 18 tainted by reading inode 32
+taint: write to clean inode 33 refused for pid 18
+A8 BLOCKED overwrite the victim: write-down rule
+taint: pid 20 tainted by reading inode 32
+taint: unlink refused for pid 20
+A9 BLOCKED link the inbox under a new name: flag is on the inode, not the name
+taint: link into /safe refused for pid 21
+taint: pid 21 tainted by reading inode 32
+taint: link into /safe refused for pid 21
+taint: create in /safe refused for pid 21
+exec: fail
+taint: exec ld.evil refused for pid 21
+A10 BLOCKED untrusted program into /safe: /safe link and create rules; exec of untrusted taints
+launder: 10/10 attacks blocked, parent tainted=0
+$ QEMU: Terminated
+
+
+===== control: mid-term kernel (tag midterm) =====
+$ launder
+taint: pid 4 tainted by reading inode 31
+taint: unlink refused for pid 4
+A1 BLOCKED read through a dup'd fd: fileread taints via the inode, not the fd
+taint: pid 5 tainted by reading inode 31
+taint: unlink refused for pid 5
+A2 LEAKED write, delete, recreate: unlink refused; create starts untrusted
+taint: pid 9 tainted by reading inode 31
+taint: pid 7 tainted by reading a pipe
+taint: unlink refused for pid 7
+A3 BLOCKED clean + tainted writer on one pipe: piperead byte ranges
+taint: pid 11 tainted by reading inode 31
+taint: pid 10 tainted by reading a pipe
+A4 LEAKED pipe -> clean helper -> file -> reader: piperead, then filewrite marks the file
+taint: pid 13 tainted by reading inode 31
+taint: unlink refused for pid 13
+rm: ld.victim failed to delete
+A5 BLOCKED exec a fresh program: exec keeps taint; /safe exec rule
+taint: pid 14 tainted by reading inode 31
+taint: unlink refused for pid 15
+A6 BLOCKED fork a child to delete: fork copies taint
+taint: pid 16 tainted by reading inode 31
+A7 LEAKED copy to a new file (mid-term hole): create/filewrite mark the copy
+taint: pid 18 tainted by reading inode 31
+A8 LEAKED overwrite the victim: write-down rule
+taint: pid 20 tainted by reading inode 31
+taint: unlink refused for pid 20
+A9 BLOCKED link the inbox under a new name: flag is on the inode, not the name
+taint: pid 21 tainted by reading inode 31
+exec: fail
+taint: unlink refused for pid 21
+rm: ld.victim failed to delete
+A10 BLOCKED untrusted program into /safe: /safe link and create rules; exec of untrusted taints
+launder: 6/10 attacks blocked, parent tainted=0
+$ QEMU: Terminated
+
