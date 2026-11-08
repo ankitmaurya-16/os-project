@@ -1,0 +1,149 @@
+# Final step 6: false-positive table
+#
+# Every program below ran as a TAINTED process: "taintrun prog args" reads
+# /inbox.txt (marked untrusted), then execs prog. For programs that are not
+# in the default /safe list, a clean shell first hard-linked them into /safe
+# ("ln /mkdir /safe/mkdir", ...) so that the rest of the policy could be
+# tested, not only the exec rule.
+#
+# | Program (tainted)                     | Result                                | Classification              |
+# |---------------------------------------|---------------------------------------|-----------------------------|
+# | /safe/ls, cat, wc, grep, echo         | work normally                         | works                       |
+# | /ls, /mkdir (outside /safe)           | exec refused                          | policy: /safe exec rule     |
+# | /safe/mkdir d1                        | works (directory created)             | works                       |
+# | /safe/mkdir /safe/d2                  | refused                               | policy: no create in /safe  |
+# | /safe/ln report.txt r2                | works (link outside /safe)            | works                       |
+# | /safe/rm scratch.txt                  | refused                               | policy: unlink rule (the point) |
+# | /safe/kill, forktest, zombie          | work normally                         | works                       |
+# | /safe/stressfs                        | works (its new files start untrusted) | works                       |
+# | tainted sh: "ls" with cwd /           | exec refused; "cd /safe" then plain   | policy: /safe exec rule (sh |
+# |                                       | names work                            | has no PATH)                |
+# | tainted sh: "/safe/echo hi > fp.new"  | works; fp.new is untrusted            | works                       |
+# | tainted sh: "/safe/echo hi > report.txt" | refused, report.txt unchanged      | policy: write-down          |
+# | tainted sh: "cat /inbox.txt | wc"     | works (cwd /safe)                     | works                       |
+# | /safe/usertests                       | fails in createdelete (unlink)        | policy: unlink rule         |
+# | usertests as a CLEAN process          | identical to the baseline             | no false positives (steps 1-4 logs) |
+#
+# No implementation bugs found: every failure is a direct, intended
+# consequence of one rule. The one false positive that is NOT intended by
+# a rule is the per-pipe mode's clean-byte case, which per-byte mode removes
+# (final_step4_pipe_compare.txt).
+
+$ marktaint /inbox.txt
+marktaint: /inbox.txt is now untrusted
+$ taintrun /safe/ls /safe
+taint: pid 4 tainted by reading inode 6
+.              1 32 192
+..             1 1 528
+cat            2 7 16360
+echo           2 8 15232
+grep           2 10 19296
+wc             2 20 16656
+ls             2 14 17892
+sh             2 17 29512
+helper         2 28 15636
+tainttest      2 27 44192
+launder        2 29 26564
+taintrun       2 30 15768
+$ taintrun /safe/cat report.txt
+taint: pid 5 tainted by reading inode 6
+The server handled 100 requests.
+Five requests failed.
+Average response time was 20 ms.
+$ taintrun /safe/wc report.txt
+taint: pid 6 tainted by reading inode 6
+3 14 88 report.txt
+$ taintrun /safe/grep requests report.txt
+taint: pid 7 tainted by reading inode 6
+The server handled 100 requests.
+Five requests failed.
+$ taintrun /safe/echo hello
+taint: pid 8 tainted by reading inode 6
+hello
+$ taintrun /ls
+taint: pid 9 tainted by reading inode 6
+taint: exec /ls refused for pid 9
+taintrun: exec /ls failed
+$ taintrun /mkdir d1
+taint: pid 10 tainted by reading inode 6
+taint: exec /mkdir refused for pid 10
+taintrun: exec /mkdir failed
+$ ln /mkdir /safe/mkdir
+$ ln /ln /safe/ln
+$ ln /rm /safe/rm
+$ ln /kill /safe/kill
+$ ln /stressfs /safe/stressfs
+$ ln /forktest /safe/forktest
+$ ln /zombie /safe/zombie
+$ ln /usertests /safe/usertests
+$ taintrun /safe/mkdir d1
+taint: pid 19 tainted by reading inode 6
+$ taintrun /safe/mkdir /safe/d2
+taint: pid 20 tainted by reading inode 6
+taint: create in /safe refused for pid 20
+mkdir: /safe/d2 failed to create
+$ taintrun /safe/ln report.txt r2
+taint: pid 21 tainted by reading inode 6
+$ taintrun /safe/rm scratch.txt
+taint: pid 22 tainted by reading inode 6
+taint: unlink refused for pid 22
+rm: scratch.txt failed to delete
+$ taintrun /safe/kill 999
+taint: pid 23 tainted by reading inode 6
+$ taintrun /safe/forktest
+taint: pid 24 tainted by reading inode 6
+fork test
+fork test OK
+$ taintrun /safe/zombie
+taint: pid 86 tainted by reading inode 6
+zombie!
+$ taintrun /safe/stressfs
+taint: pid 88 tainted by reading inode 6
+stressfs starting
+write 0
+write 1
+write 2
+read
+write 3
+read
+write 4
+read
+read
+read
+$ taintrun /safe/sh
+taint: pid 93 tainted by reading inode 6
+$ ls
+taint: exec ls refused for pid 94
+exec ls failed
+$ /safe/echo hi > fp.new
+$ /safe/cat fp.new
+hi
+$ /safe/echo hi > report.txt
+taint: write to clean inode 3 refused for pid 97
+taint: write to clean inode 3 refused for pid 97
+taint: write to clean inode 3 refused for pid 97
+$ /safe/cat report.txt
+The server handled 100 requests.
+Five requests failed.
+Average response time was 20 ms.
+$ cd /safe
+$ wc /report.txt
+3 14 88 /report.txt
+$ cat /inbox.txt | wc
+2 12 83 
+$ $ taintrun /safe/usertests
+taint: pid 103 tainted by reading inode 6
+usertests starting
+arg test passed
+createdelete test
+taint: unlink refused for pid 105
+unlink fataint: unlink refused for pid 104
+unlink failed
+iled
+taint: unlink refused for pid 106
+unlink failed
+taint: unlink refused for pid 107
+unlink failed
+oops createdelete p1 did exist
+$ QEMU: Terminated
+

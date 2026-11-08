@@ -1,0 +1,69 @@
+# Final: tainttest, boot 1 (fresh fs.img). Case 12 marks tt.persist and SKIPs.
+
+$ tainttest
+tainttest: pipe taint mode per-byte
+1 PASS fresh process is not tainted
+2 PASS reading a clean file does not taint
+taint: pid 6 tainted by reading inode 35
+3 PASS reading an untrusted file taints
+4 PASS opening an untrusted file without reading does not taint
+taint: pid 8 tainted by reading inode 35
+5 PASS child forked after taint is tainted, child forked before is not
+taint: pid 11 tainted by reading inode 35
+6 PASS taint survives exec (of /safe/tainttest)
+taint: pid 13 tainted by reading inode 35
+taint: pid 12 tainted by reading a pipe
+7 PASS pipe: tainted writer taints the clean reader
+taint: pid 16 tainted by reading inode 35
+taint: pid 14 tainted by reading a pipe
+8 PASS pipe shared by clean and tainted writers taints the reader
+taint: pid 17 tainted by reading inode 35
+taint: unlink refused for pid 17
+9 PASS tainted unlink returns -1 and the file still exists
+10 PASS clean process can still unlink
+taint: pid 19 tainted by reading inode 35
+11 PASS reading through a dup'd fd taints
+12 SKIP flag persists across reboot (marked tt.persist; reboot from the same fs.img and run tainttest again)
+13 PASS deleted-then-recreated file starts clean
+taint: pid 21 tainted by reading inode 35
+taint: pid 21 marked inode 38 untrusted by writing
+14 PASS tainted write to an empty clean file marks it untrusted
+taint: pid 22 tainted by reading inode 35
+15 PASS file created by a tainted process starts untrusted
+16 PASS files written by a clean process stay clean
+taint: pid 24 tainted by reading inode 35
+taint: write to clean inode 34 refused for pid 24
+17 PASS write-down: tainted write to a clean file is refused
+taint: pid 25 tainted by reading inode 35
+18 PASS tainted process can write its own untrusted file
+taint: pid 26 tainted by reading inode 35
+   (tainted console write)
+19 PASS tainted process can still write to the console
+taint: pid 27 tainted by reading inode 35
+taint: exec /ls refused for pid 27
+20 PASS tainted exec outside /safe is refused
+taint: pid 28 tainted by reading inode 35
+taint: exec /safe/../ls refused for pid 28
+21 PASS tainted exec of /safe/../ls is refused
+taint: pid 29 tainted by reading inode 35
+taint: link into /safe refused for pid 29
+22 PASS tainted link into /safe is refused
+taint: link into /safe refused for pid 30
+23 PASS linking an untrusted file into /safe is refused
+taint: pid 31 tainted by reading inode 35
+taint: create in /safe refused for pid 31
+24 PASS tainted create in /safe is refused
+taint: pid 32 tainted by exec of untrusted tt.bin
+taint: exec tt.bin refused for pid 32
+25 PASS running an untrusted program taints, and is refused
+taint: pid 35 tainted by reading inode 35
+   after reading only the clean byte: tainted=0
+taint: pid 33 tainted by reading a pipe
+26 PASS pipe: reading only clean bytes does not taint (per-byte)
+taint: pid 37 tainted by reading inode 35
+taint: pid 36 tainted by reading a pipe
+27 PASS pipe: a writer sleeping mid-write has already tainted its bytes
+0 PASS parent stayed clean
+tainttest: ALL PASSED
+$ QEMU: Terminated
+

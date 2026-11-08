@@ -1,0 +1,114 @@
+# Final: tainttest + launder, boot 2 (same fs.img, no rebuild). Case 12 PASS.
+
+$ tainttest
+tainttest: pipe taint mode per-byte
+1 PASS fresh process is not tainted
+2 PASS reading a clean file does not taint
+taint: pid 6 tainted by reading inode 35
+3 PASS reading an untrusted file taints
+4 PASS opening an untrusted file without reading does not taint
+taint: pid 8 tainted by reading inode 35
+5 PASS child forked after taint is tainted, child forked before is not
+taint: pid 11 tainted by reading inode 35
+6 PASS taint survives exec (of /safe/tainttest)
+taint: pid 13 tainted by reading inode 35
+taint: pid 12 tainted by reading a pipe
+7 PASS pipe: tainted writer taints the clean reader
+taint: pid 16 tainted by reading inode 35
+taint: pid 14 tainted by reading a pipe
+8 PASS pipe shared by clean and tainted writers taints the reader
+taint: pid 17 tainted by reading inode 35
+taint: unlink refused for pid 17
+9 PASS tainted unlink returns -1 and the file still exists
+10 PASS clean process can still unlink
+taint: pid 19 tainted by reading inode 35
+11 PASS reading through a dup'd fd taints
+12 PASS flag persists across reboot
+13 PASS deleted-then-recreated file starts clean
+taint: pid 21 tainted by reading inode 35
+taint: pid 21 marked inode 38 untrusted by writing
+14 PASS tainted write to an empty clean file marks it untrusted
+taint: pid 22 tainted by reading inode 35
+15 PASS file created by a tainted process starts untrusted
+16 PASS files written by a clean process stay clean
+taint: pid 24 tainted by reading inode 35
+taint: write to clean inode 34 refused for pid 24
+17 PASS write-down: tainted write to a clean file is refused
+taint: pid 25 tainted by reading inode 35
+18 PASS tainted process can write its own untrusted file
+taint: pid 26 tainted by reading inode 35
+   (tainted console write)
+19 PASS tainted process can still write to the console
+taint: pid 27 tainted by reading inode 35
+taint: exec /ls refused for pid 27
+20 PASS tainted exec outside /safe is refused
+taint: pid 28 tainted by reading inode 35
+taint: exec /safe/../ls refused for pid 28
+21 PASS tainted exec of /safe/../ls is refused
+taint: pid 29 tainted by reading inode 35
+taint: link into /safe refused for pid 29
+22 PASS tainted link into /safe is refused
+taint: link into /safe refused for pid 30
+23 PASS linking an untrusted file into /safe is refused
+taint: pid 31 tainted by reading inode 35
+taint: create in /safe refused for pid 31
+24 PASS tainted create in /safe is refused
+taint: pid 32 tainted by exec of untrusted tt.bin
+taint: exec tt.bin refused for pid 32
+25 PASS running an untrusted program taints, and is refused
+taint: pid 35 tainted by reading inode 35
+   after reading only the clean byte: tainted=0
+taint: pid 33 tainted by reading a pipe
+26 PASS pipe: reading only clean bytes does not taint (per-byte)
+taint: pid 37 tainted by reading inode 35
+taint: pid 36 tainted by reading a pipe
+27 PASS pipe: a writer sleeping mid-write has already tainted its bytes
+0 PASS parent stayed clean
+tainttest: ALL PASSED
+$ launder
+taint: pid 39 tainted by reading inode 38
+taint: unlink refused for pid 39
+A1 BLOCKED read through a dup'd fd: fileread taints via the inode, not the fd
+taint: pid 40 tainted by reading inode 38
+taint: unlink refused for pid 40
+taint: pid 41 tainted by reading inode 40
+taint: unlink refused for pid 41
+A2 BLOCKED write, delete, recreate: unlink refused; create starts untrusted
+taint: pid 44 tainted by reading inode 38
+taint: pid 42 tainted by reading a pipe
+taint: unlink refused for pid 42
+A3 BLOCKED clean + tainted writer on one pipe: piperead byte ranges
+taint: pid 46 tainted by reading inode 38
+taint: pid 45 tainted by reading a pipe
+taint: pid 45 marked inode 40 untrusted by writing
+taint: pid 47 tainted by reading inode 40
+taint: unlink refused for pid 47
+A4 BLOCKED pipe -> clean helper -> file -> reader: piperead, then filewrite marks the file
+taint: pid 48 tainted by reading inode 38
+taint: exec /rm refused for pid 48
+taint: unlink refused for pid 48
+launder: exec'd child unlink(ld.victim) = -1, tainted=1
+A5 BLOCKED exec a fresh program: exec keeps taint; /safe exec rule
+taint: pid 49 tainted by reading inode 38
+taint: unlink refused for pid 50
+A6 BLOCKED fork a child to delete: fork copies taint
+taint: pid 51 tainted by reading inode 38
+taint: pid 52 tainted by reading inode 40
+taint: unlink refused for pid 52
+A7 BLOCKED copy to a new file (mid-term hole): create/filewrite mark the copy
+taint: pid 53 tainted by reading inode 38
+taint: write to clean inode 39 refused for pid 53
+A8 BLOCKED overwrite the victim: write-down rule
+taint: pid 55 tainted by reading inode 38
+taint: unlink refused for pid 55
+A9 BLOCKED link the inbox under a new name: flag is on the inode, not the name
+taint: link into /safe refused for pid 56
+taint: pid 56 tainted by reading inode 38
+taint: link into /safe refused for pid 56
+taint: create in /safe refused for pid 56
+exec: fail
+taint: exec ld.evil refused for pid 56
+A10 BLOCKED untrusted program into /safe: /safe link and create rules; exec of untrusted taints
+launder: 10/10 attacks blocked, parent tainted=0
+$ QEMU: Terminated
+
