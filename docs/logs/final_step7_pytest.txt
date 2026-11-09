@@ -1,0 +1,32 @@
+plugins: cov-7.1.0, anyio-4.2.0
+collecting ... collected 27 items
+
+test_agent.py::test_unknown_tool_rejected PASSED                         [  3%]
+test_agent.py::test_unknown_tool_never_reaches_guest PASSED              [  7%]
+test_agent.py::test_bad_path_rejected[../README] PASSED                  [ 11%]
+test_agent.py::test_bad_path_rejected[/a/b] PASSED                       [ 14%]
+test_agent.py::test_bad_path_rejected[/..] PASSED                        [ 18%]
+test_agent.py::test_bad_path_rejected[/.] PASSED                         [ 22%]
+test_agent.py::test_bad_path_rejected[] PASSED                           [ 25%]
+test_agent.py::test_bad_path_rejected[/] PASSED                          [ 29%]
+test_agent.py::test_bad_path_rejected[/x;rm important.txt] PASSED        [ 33%]
+test_agent.py::test_bad_path_rejected[/averyverylongname.txt] PASSED     [ 37%]
+test_agent.py::test_malformed_call_rejected[action0] PASSED              [ 40%]
+test_agent.py::test_malformed_call_rejected[action1] PASSED              [ 44%]
+test_agent.py::test_malformed_call_rejected[action2] PASSED              [ 48%]
+test_agent.py::test_malformed_call_rejected[action3] PASSED              [ 51%]
+test_agent.py::test_malformed_call_rejected[read_file /inbox.txt] PASSED [ 55%]
+test_agent.py::test_path_is_normalized PASSED                            [ 59%]
+test_agent.py::test_delete_needs_allow_destructive PASSED                [ 62%]
+test_agent.py::test_timeout_returns_error PASSED                         [ 66%]
+test_agent.py::test_forged_end_marker_is_not_accepted PASSED             [ 70%]
+test_agent.py::test_bridge_refuses_unsafe_path PASSED                    [ 74%]
+test_agent.py::test_control_delete_succeeds_when_inbox_trusted PASSED    [ 77%]
+test_agent.py::test_uart_bridge_end_to_end[marked] PASSED                [ 81%]
+test_agent.py::test_uart_bridge_end_to_end[control] PASSED               [ 85%]
+test_agent.py::test_list_succeeds PASSED                                 [ 88%]
+test_agent.py::test_read_trusted_succeeds PASSED                         [ 92%]
+test_agent.py::test_read_untrusted_taints_session PASSED                 [ 96%]
+test_agent.py::test_injected_delete_refused_by_kernel PASSED             [100%]
+
+============================= 27 passed in 10.69s ==============================
