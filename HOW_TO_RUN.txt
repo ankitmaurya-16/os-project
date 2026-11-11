@@ -1,0 +1,33 @@
+xv6 taint tracking project - how to run
+=======================================
+
+Requirements: QEMU (qemu-system-i386), an i386 ELF cross toolchain (or gcc
+on Linux x86), Python 3 with pexpect (only for the host agent).
+
+Boot xv6:
+    make clean && make qemu-nox          (quit with Ctrl-A x)
+
+Inside xv6, at the $ prompt:
+    tainttest                            27 taint test cases
+    launder                              10 laundering attacks
+    marktaint /inbox.txt
+    cat /inbox.txt | helper /important.txt     (unlink refused)
+    taintrun /ls                         (exec outside /safe refused)
+
+Host agent demo (from the repo root):
+    cd python
+    python3 demo.py                      inbox marked: delete refused
+    python3 demo.py --control            inbox not marked: delete works
+    python3 demo.py --uart               same, over the second serial port
+    python3 -m pytest -q                 host-side tests
+
+Documentation:
+    docs/MIDTERM.md, docs/FINAL.md       design notes and results
+    docs/logs/                           saved outputs of every test run
+    python/README.md                     host agent details
+Every kernel change is marked with a "// taint:" comment.
+
+Live LLM run (tested with Groq; the key is asked for if LLM_API_KEY is unset):
+    export LLM_PROVIDER=openai LLM_BASE_URL=https://api.groq.com/openai/v1
+    export LLM_MODEL=qwen/qwen3.8-27b
+    python3 demo.py --planner llm        (or --uart / --control)
